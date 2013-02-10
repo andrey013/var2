@@ -1,6 +1,6 @@
 module Foundation where
 
-import Prelude
+import "base" Prelude
 import Yesod
 import Yesod.Fay
 import Yesod.Static

@@ -2,11 +2,11 @@ module Import.Fay
     ( fayFile
     ) where
 
-import Prelude
+import "base" Prelude
 import Yesod.Fay
 import Settings.Development (development)
 
 fayFile :: FayFile
 fayFile
-    | development = fayFileReload
+    | development = fayFileProd --fayFileReload
     | otherwise   = fayFileProd

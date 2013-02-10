@@ -1,6 +1,6 @@
 module Model where
 
-import Prelude
+import "base" Prelude
 import Yesod
 import Data.Text (Text)
 import Database.Persist.Quasi

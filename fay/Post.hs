@@ -2,22 +2,19 @@
 module Post where
 
 import Language.Fay.Prelude
-import Language.Fay.JQuery
-import Language.Fay.DOM
-import Language.Fay.FFI
+--import Language.Fay.JQuery
+--import Language.Fay.DOM
+--import FFI
 import Language.Fay.Yesod
 
 import SharedTypes
+{-
+alert :: String -> Fay ()
+alert = ffi "window.alert(%1)"
 
-onUpdate :: EventObject -> Fay Bool
-onUpdate e = do
-    t <- eventSource e
-    file <- parent t >>= childrenMatching "input[type=date]" >>= getVal
-    newname <- getVal t
-    call RollDie $ const $ return ()
-    return True
 
+alert' :: (Foreign a) => a -> Fay ()
+alert' = ffi "window.alert(JSON.stringify(%1))"
+-}
 main :: Fay ()
-main = ready $ do
-    onUpdate
-    return ()
+main = print $ RollDie --call RollDie $ const $ return () -- $ (alert . show) >> return False

@@ -9,13 +9,14 @@ getAlloysR :: Handler RepHtml
 getAlloysR = defaultLayout $ do
         let handlerName = "getHomeR" :: Text
         aDomId <- lift newIdent
-        setTitle "Alloys"
+        setTitle "Alloys0"
         $(widgetFile "alloys")
-        $(fayFile "Post")
+        -- $(fayFile "Post")
+        
 
 
 onCommand :: CommandHandler App App
 onCommand render command =
     case command of
         RollDie r -> do
-            render r 1
+            render r 4
