@@ -1,3 +1,2 @@
 :set -i.:config:dist/build/autogen
-:set -XCPP -XTemplateHaskell -XQuasiQuotes -XTypeFamilies -XFlexibleContexts -XGADTs -XOverloadedStrings -XMultiParamTypeClasses -XGeneralizedNewtypeDeriving -XEmptyDataDecls -XPackageImports -XNoImplicitPrelude
-:set -hide-package fay-base
+:set -XCPP -XTemplateHaskell -XQuasiQuotes -XTypeFamilies -XFlexibleContexts -XGADTs -XOverloadedStrings -XMultiParamTypeClasses -XGeneralizedNewtypeDeriving -XEmptyDataDecls
