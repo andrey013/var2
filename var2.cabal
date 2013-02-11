@@ -76,7 +76,7 @@ library
                  , data-default
                  , aeson
                  , fay                           >= 0.14
-                 , fay-base                      >= 0.14
+                 --, fay-base                      >= 0.14
 
 executable         var2
     if flag(library-only)

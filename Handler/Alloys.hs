@@ -4,6 +4,8 @@ module Handler.Alloys where
 import Import
 import SharedTypes
 import Yesod.Fay
+import qualified Data.Text as T
+
 
 getAlloysR :: Handler RepHtml
 getAlloysR = defaultLayout $ do
@@ -11,12 +13,12 @@ getAlloysR = defaultLayout $ do
         aDomId <- lift newIdent
         setTitle "Alloys0"
         $(widgetFile "alloys")
-        -- $(fayFile "Post")
+        $(fayFile "Post")
         
 
 
 onCommand :: CommandHandler App App
-onCommand render command =
-    case command of
-        RollDie r -> do
-            render r 4
+onCommand render (RollDie a r) = render r a
+onCommand render (GetAlloys r) = do
+    alloys <- runDB $ selectList [] []
+    render r $ map (T.unpack . alloyName . entityVal) alloys

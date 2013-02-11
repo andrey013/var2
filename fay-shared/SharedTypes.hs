@@ -2,11 +2,13 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 module SharedTypes where
 
-import "fay-base" Prelude
-import "fay-base" Data.Data
+import Prelude
+import Data.Data
 --import Language.Fay.Prelude
 import Language.Fay.Yesod
-import Language.Fay.FFI ()
+--import Fay.FFI ()
 
-data Command = RollDie (Returns Int)
+data Command = RollDie Int (Returns Int)
+             | GetAlloys (Returns [String])
     deriving (Show, Read, Typeable, Data)
+

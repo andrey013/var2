@@ -1,20 +1,31 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 module Post where
 
-import Language.Fay.Prelude
---import Language.Fay.JQuery
---import Language.Fay.DOM
---import FFI
+import Prelude
+import FFI
 import Language.Fay.Yesod
-
 import SharedTypes
-{-
+
+alert' :: (Returns a -> command) -> Fay ()
+alert' f = alert'' (f Returns)
+
+alert'' :: Automatic c -> Fay ()
+alert'' = ffi "window.alert(%1)"
+
 alert :: String -> Fay ()
 alert = ffi "window.alert(%1)"
 
+-- | Call a command.
+call :: (Returns a -> command)
+     -> (a -> Fay ()) -- ^ Success Handler
+     -> Fay ()
+call f g = ajaxCommand (f Returns) g
 
-alert' :: (Foreign a) => a -> Fay ()
-alert' = ffi "window.alert(JSON.stringify(%1))"
--}
+-- | Run the AJAX command.
+ajaxCommand :: Automatic command
+            -> (a -> Fay ()) -- ^ Success Handler
+            -> Fay ()
+ajaxCommand = ffi "jQuery['ajax']({ url: window['yesodFayCommandPath'], type: 'POST', data: { json: JSON.stringify(%1) }, dataType: 'json', success : %2})"
+
 main :: Fay ()
-main = print $ RollDie --call RollDie $ const $ return () -- $ (alert . show) >> return False
+main = call (GetAlloys) $ (alert . show)

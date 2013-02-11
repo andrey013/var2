@@ -8,5 +8,5 @@ import Settings.Development (development)
 
 fayFile :: FayFile
 fayFile
-    | development = fayFileProd --fayFileReload
+    | development = fayFileReload
     | otherwise   = fayFileProd
