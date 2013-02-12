@@ -5,7 +5,7 @@
 -- declared in the Foundation.hs file.
 module Settings where
 
-import "base" Prelude
+import Prelude
 import Text.Shakespeare.Text (st)
 import Language.Haskell.TH.Syntax
 import Database.Persist.Sqlite (SqliteConf)

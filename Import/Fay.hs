@@ -2,7 +2,7 @@ module Import.Fay
     ( fayFile
     ) where
 
-import "base" Prelude
+import Prelude
 import Yesod.Fay
 import Settings.Development (development)
 

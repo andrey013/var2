@@ -1,18 +1,18 @@
-{-# LANGUAGE TupleSections, OverloadedStrings #-}
+{-# LANGUAGE TupleSections, OverloadedStrings, RecordWildCards #-}
 module Handler.Alloys where
 
 import Import
 import SharedTypes
 import Yesod.Fay
-import qualified Data.Text as T
-
+import Data.Text (unpack)
 
 getAlloysR :: Handler RepHtml
 getAlloysR = defaultLayout $ do
         let handlerName = "getHomeR" :: Text
         aDomId <- lift newIdent
-        setTitle "Alloys0"
+        setTitle "Редактор сплавов"
         $(widgetFile "alloys")
+        addScript $ StaticR js_d3_v3_min_js
         $(fayFile "Post")
         
 
@@ -20,5 +20,11 @@ getAlloysR = defaultLayout $ do
 onCommand :: CommandHandler App App
 onCommand render (RollDie a r) = render r a
 onCommand render (GetAlloys r) = do
-    alloys <- runDB $ selectList [] []
-    render r $ map (T.unpack . alloyName . entityVal) alloys
+    alloys <- runDB $ selectList [AlloyLiquidus >=. 0] []
+    render r $ map (convert . entityVal) alloys
+  where
+    convert Import.Alloy{..} = SharedTypes.Alloy{
+                                   name = unpack alloyName
+                                  ,liquidus = alloyLiquidus
+                                  ,solidus = alloySolidus
+                               }

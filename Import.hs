@@ -2,7 +2,7 @@ module Import
     ( module Import
     ) where
 
-import   "base"  Prelude              as Import hiding (head, init, last,
+import           Prelude              as Import hiding (head, init, last,
                                                  readFile, tail, writeFile)
 import           Yesod                as Import hiding (Route (..))
 

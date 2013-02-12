@@ -1,6 +1,6 @@
 module Foundation where
 
-import "base" Prelude
+import Prelude
 import Yesod
 import Yesod.Fay
 import Yesod.Static
@@ -86,8 +86,9 @@ instance Yesod App where
 
         pc <- widgetToPageContent $ do
             $(widgetFile "normalize")
-            addStylesheet $ StaticR css_bootstrap_css
+            addStylesheet $ StaticR css_bootstrap_min_css
             $(widgetFile "default-layout")
+            addScript $ StaticR js_bootstrap_min_js
         hamletToRepHtml $(hamletFile "templates/default-layout-wrapper.hamlet")
 
     -- This is done to provide an optimization for serving static files from
@@ -119,7 +120,9 @@ instance Yesod App where
     shouldLog _ _source level =
         development || level == LevelWarn || level == LevelError
 
-instance YesodJquery App
+instance YesodJquery App where
+    urlJqueryJs _ = Left $ StaticR js_jquery_min_js
+
 instance YesodFay App where
     type YesodFayCommand App = Command
 

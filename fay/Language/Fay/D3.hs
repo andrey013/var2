@@ -2,6 +2,7 @@
 {-# LANGUAGE EmptyDataDecls    #-}
 module Language.Fay.D3 (
     append,
+    append',
     attr,
     classed,
     classedWith,
@@ -35,11 +36,9 @@ import           FFI
 import           Prelude
 
 data D3
-instance Foreign D3
 
 -- | Work with data (d3.select().data([]))
-data (Foreign a) => D3D a
-instance (Foreign a) => Foreign (D3D a)
+data D3D a
 
 ----
 ---- Select
@@ -48,10 +47,10 @@ instance (Foreign a) => Foreign (D3D a)
 d3filter :: String -> D3 -> Fay D3
 d3filter = ffi "%2['filter'](%1)"
 
-filterWith :: (Foreign a) => (a -> Bool) -> D3D a -> Fay (D3D a)
+filterWith :: (a -> Bool) -> D3D a -> Fay (D3D a)
 filterWith = ffi "%2['filter'](%1)"
 
-filterWithIndex :: (Foreign a) => (a -> Int -> Bool) -> D3D a -> Fay (D3D a)
+filterWithIndex :: (a -> Int -> Bool) -> D3D a -> Fay (D3D a)
 filterWithIndex = ffi "%2['filter'](%1)"
 
 select :: String -> Fay D3
@@ -64,34 +63,37 @@ selectAll = ffi "%2['selectAll'](%1)"
 ---- Manipulation API
 ----
 
-append :: (Foreign a) => String -> D3D a -> Fay (D3D a)
+append :: String -> D3 -> Fay D3
 append = ffi "%2['append'](%1)"
 
-attr :: (Foreign a) => String -> a -> D3 -> Fay D3
+append' :: String -> D3D a -> Fay (D3D a)
+append' = ffi "%2['append'](%1)"
+
+attr :: String -> a -> D3 -> Fay D3
 attr = ffi "%3['attr'](%1,%2)"
 
-attrWith :: (Foreign a) => String -> (d -> String) -> D3D a -> Fay (D3D a)
+attrWith :: String -> (d -> String) -> D3D a -> Fay (D3D a)
 attrWith = ffi "%3['attr'](%1,%2)"
 
-attrWithIndex :: (Foreign a) => String -> (d -> Int -> String) -> D3D a -> Fay (D3D a)
+attrWithIndex :: String -> (d -> Int -> String) -> D3D a -> Fay (D3D a)
 attrWithIndex = ffi "%3['attr'](%1,%2)"
 
 classed :: String -> Bool -> D3 -> Fay D3
 classed = ffi "%3['classed'](%1,%2)"
 
-classedWith :: (Foreign a) => String -> (a -> Bool) -> D3D a -> Fay (D3D a)
+classedWith :: String -> (a -> Bool) -> D3D a -> Fay (D3D a)
 classedWith = ffi "%3['classed'](%1,%2)"
 
-classedWithIndex :: (Foreign a) => String -> (a -> Int -> Bool) -> D3D a -> Fay (D3D a)
+classedWithIndex :: String -> (a -> Int -> Bool) -> D3D a -> Fay (D3D a)
 classedWithIndex = ffi "%3['classed'](%1,%2)"
 
 html :: String -> D3 -> Fay D3
 html = ffi "%2['html'](%1)"
 
-htmlWith :: (Foreign a) => (a -> String) -> D3D a -> Fay (D3D a)
+htmlWith :: (a -> String) -> D3D a -> Fay (D3D a)
 htmlWith = ffi "%2['html'](%1)"
 
-htmlWithIndex :: (Foreign a) => (a -> Int -> String) -> D3D a -> Fay (D3D a)
+htmlWithIndex :: (a -> Int -> String) -> D3D a -> Fay (D3D a)
 htmlWithIndex = ffi "%2['html'](%1)"
 
 ----
@@ -101,16 +103,16 @@ htmlWithIndex = ffi "%2['html'](%1)"
 property :: String -> String -> D3 -> Fay D3
 property = ffi "%3['property'](%1,%2)"
 
-propertyWith :: (Foreign a) => String -> (a -> String) -> D3D a -> Fay (D3D a)
+propertyWith :: String -> (a -> String) -> D3D a -> Fay (D3D a)
 propertyWith = ffi "%3['property'](%1,%2)"
 
-propertyWithIndex :: (Foreign a) => String -> (a -> Int -> String) -> D3D a -> Fay (D3D a)
+propertyWithIndex :: String -> (a -> Int -> String) -> D3D a -> Fay (D3D a)
 propertyWithIndex = ffi "%3['property'](%1,%2)"
 
 remove :: D3 -> Fay D3
 remove = ffi "%1['remove']()"
 
-remove' :: (Foreign a) => D3D a -> Fay (D3D a)
+remove' :: D3D a -> Fay (D3D a)
 remove' = ffi "%1['remove']()"
 
 ----
@@ -120,30 +122,30 @@ remove' = ffi "%1['remove']()"
 style :: String -> String -> D3 -> Fay D3
 style = ffi "%3['style'](%1,%2)"
 
-styleWith :: (Foreign a) => String -> (a -> String) -> D3D a -> Fay (D3D a)
+styleWith :: String -> (a -> String) -> D3D a -> Fay (D3D a)
 styleWith = ffi "%3['style'](%1,%2)"
 
-styleWithIndex :: (Foreign a) => String -> (a -> Int -> String) -> D3D a -> Fay (D3D a)
+styleWithIndex :: String -> (a -> Int -> String) -> D3D a -> Fay (D3D a)
 styleWithIndex = ffi "%3['style'](%1,%2)"
 
 text :: String -> D3 -> Fay D3
 text = ffi "%2['text'](%1)"
 
-textWith :: (Foreign a) => (a -> String) -> D3D a -> Fay (D3D a)
+textWith :: (a -> String) -> D3D a -> Fay (D3D a)
 textWith = ffi "%2['text'](%1)"
 
-textWithIndex :: (Foreign a) => (a -> Int -> String) -> D3D a -> Fay (D3D a)
+textWithIndex :: (a -> Int -> String) -> D3D a -> Fay (D3D a)
 textWithIndex = ffi "%2['text'](%1)"
 
 ----
 ---- Data
 ----
-d3data :: (Foreign a) => [a] -> D3 -> Fay (D3D a)
+d3data :: [a] -> D3 -> Fay (D3D a)
 d3data = ffi "%2['data'](%1)"
 
-enter :: (Foreign a) => D3D a -> Fay (D3D a)
+enter :: D3D a -> Fay (D3D a)
 enter = ffi "%1['enter']()"
 
-exit :: (Foreign a) => D3D a -> Fay (D3D a)
+exit :: D3D a -> Fay (D3D a)
 exit = ffi "%1['exit']()"
 
