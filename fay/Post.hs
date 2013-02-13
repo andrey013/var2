@@ -41,11 +41,16 @@ main = do
         return  thead >>=
                 append "tr" >>=
                 selectAll "th" >>=
-                d3data d >>=
+                d3data ["Название", "Ликвидус", "Солидус"] >>=
                 enter >>=
                 append' "th" >>=
-                textWith (\a -> alloyName a)
-     
+                textWith (\a -> a)
+        rows <- return tbody >>=
+                selectAll "tr" >>=
+                d3data d >>=
+                enter >>=
+                append' "tr"
+                
         return ()
 
 {-
