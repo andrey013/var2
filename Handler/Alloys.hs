@@ -21,10 +21,10 @@ onCommand :: CommandHandler App App
 onCommand render (RollDie a r) = render r a
 onCommand render (GetAlloys r) = do
     alloys <- runDB $ selectList [AlloyLiquidus >=. 0] []
-    render r $ map (convert . entityVal) alloys
+    render r $ AlloyList $ map (convert . entityVal) alloys
   where
     convert Import.Alloy{..} = SharedTypes.Alloy{
-                                   name = unpack alloyName
-                                  ,liquidus = alloyLiquidus
-                                  ,solidus = alloySolidus
+                                   alloyName = unpack alloyName
+                                  ,alloyLiquidus = alloyLiquidus
+                                  ,alloySolidus = alloySolidus
                                }

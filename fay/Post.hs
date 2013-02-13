@@ -24,13 +24,15 @@ call f g = ajaxCommand (f Returns) g
 
 -- | Run the AJAX command.
 ajaxCommand :: Automatic command
-            -> (a -> Fay ()) -- ^ Success Handler
+            -> (Automatic a -> Fay ()) -- ^ Success Handler
             -> Fay ()
 ajaxCommand = ffi "jQuery['ajax']({ url: window['yesodFayCommandPath'], type: 'POST', data: { json: JSON.stringify(%1) }, dataType: 'json', success : %2})"
 
+
+
 main :: Fay ()
 main = do
-    call (GetAlloys) $ \d -> do
+    call (GetAlloys) $ \(AlloyList d) -> do
         print $ d
         table <- (select "#alloys" >>= append "table")
         thead <- append "thead" table
@@ -39,10 +41,10 @@ main = do
         return  thead >>=
                 append "tr" >>=
                 selectAll "th" >>=
-                d3data ["1","2"] >>=
+                d3data d >>=
                 enter >>=
                 append' "th" >>=
-                textWith (\a -> a)
+                textWith (\a -> alloyName a)
      
         return ()
 
