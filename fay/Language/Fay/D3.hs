@@ -8,6 +8,7 @@ module Language.Fay.D3 (
     classedWith,
     classedWithIndex,
     d3data,
+    d3dataWith,
     enter,
     exit,
     filter,
@@ -23,6 +24,7 @@ module Language.Fay.D3 (
     remove',
     select,
     selectAll,
+    selectAll',
     style,
     styleWith,  
     styleWithIndex,
@@ -58,6 +60,9 @@ select = ffi "d3['select'](%1)"
 
 selectAll :: String -> D3 -> Fay D3
 selectAll = ffi "%2['selectAll'](%1)"
+
+selectAll' :: String ->  D3D a -> Fay (D3D a)
+selectAll' = ffi "%2['selectAll'](%1)"
 
 ----
 ---- Manipulation API
@@ -142,6 +147,9 @@ textWithIndex = ffi "%2['text'](%1)"
 ----
 d3data :: [a] -> D3 -> Fay (D3D a)
 d3data = ffi "%2['data'](%1)"
+
+d3dataWith :: (a -> [b]) -> D3D a -> Fay (D3D b)
+d3dataWith = ffi "%2['data'](%1)"
 
 enter :: D3D a -> Fay (D3D a)
 enter = ffi "%1['enter']()"

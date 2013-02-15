@@ -33,24 +33,29 @@ ajaxCommand = ffi "jQuery['ajax']({ url: window['yesodFayCommandPath'], type: 'P
 main :: Fay ()
 main = do
     call (GetAlloys) $ \(AlloyList d) -> do
-        print $ d
+        --print $ d
         table <- (select "#alloys" >>= append "table")
         thead <- append "thead" table
         tbody <- append "tbody" table
-
-        return  thead >>=
-                append "tr" >>=
-                selectAll "th" >>=
-                d3data ["Название", "Ликвидус", "Солидус"] >>=
-                enter >>=
-                append' "th" >>=
-                textWith (\a -> a)
+        let columns = ["Название", "Ликвидус", "Солидус"]
+        return thead >>=
+               append "tr" >>=
+               selectAll "th" >>=
+               d3data columns >>=
+               enter >>=
+               append' "th" >>=
+               textWith id
         rows <- return tbody >>=
                 selectAll "tr" >>=
                 d3data d >>=
                 enter >>=
                 append' "tr"
-                
+        cells <- return rows >>=
+                 selectAll' "td" >>=
+                 d3dataWith (\row -> [alloyName row, show $ alloyLiquidus row, show $ alloySolidus row]) >>=
+                 enter >>=
+                 append' "td" >>=
+                 textWith (\a -> a)
         return ()
 
 {-
