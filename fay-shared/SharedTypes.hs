@@ -14,11 +14,11 @@ data Alloy = Alloy {
    ,alloySolidus  :: Double
 } deriving (Show, Read, Typeable, Data)
 
-data AlloyList = AlloyList{
-    alloyList :: [Alloy]
+data List a = List{
+    list :: [a]
 } deriving (Show, Read, Typeable, Data)
 
 data Command = RollDie Int (Returns Int)
-             | GetAlloys (Returns AlloyList)
+             | GetAlloys (Returns (List Alloy))
     deriving (Show, Read, Typeable, Data)
 

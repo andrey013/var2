@@ -4,11 +4,17 @@ module Language.Fay.D3 (
     append,
     append',
     attr,
+    attrS,
+    attr',
+    attrS',
     classed,
     classedWith,
     classedWithIndex,
+    d3call,
+    d3behaviorDrag,
     d3data,
     d3dataWith,
+    d3this,
     enter,
     exit,
     filter,
@@ -17,12 +23,16 @@ module Language.Fay.D3 (
     html,
     htmlWith,
     htmlWithIndex,
+    on,
+    on',
+    origin,
     property,
     propertyWith,
     propertyWithIndex,
     remove,
     remove',
     select,
+    select',
     selectAll,
     selectAll',
     style,
@@ -42,6 +52,25 @@ data D3
 -- | Work with data (d3.select().data([]))
 data D3D a
 
+
+d3call :: D3 -> D3D a -> Fay (D3D a)
+d3call = ffi "%2['call'](%1)"
+
+d3behaviorDrag :: Fay D3
+d3behaviorDrag = ffi "d3.behavior.drag()"
+
+d3this :: Fay D3
+d3this = ffi "this"
+
+origin :: (d -> String) -> D3 -> Fay D3
+origin = ffi "%2['origin'](%1)"
+
+on :: String -> Fay D3 -> D3 -> Fay D3
+on = ffi "%3['on'](%1,%2)"
+
+on' :: String -> (a -> Fay D3) -> D3 -> Fay D3
+on' = ffi "%3['on'](%1,%2)"
+
 ----
 ---- Select
 ----
@@ -57,6 +86,9 @@ filterWithIndex = ffi "%2['filter'](%1)"
 
 select :: String -> Fay D3
 select = ffi "d3['select'](%1)"
+
+select' :: D3 -> Fay D3
+select' = ffi "d3['select'](%1)"
 
 selectAll :: String -> D3 -> Fay D3
 selectAll = ffi "%2['selectAll'](%1)"
@@ -74,8 +106,17 @@ append = ffi "%2['append'](%1)"
 append' :: String -> D3D a -> Fay (D3D a)
 append' = ffi "%2['append'](%1)"
 
-attr :: String -> a -> D3 -> Fay D3
+attr :: String -> Automatic a -> D3 -> Fay D3
 attr = ffi "%3['attr'](%1,%2)"
+
+attrS :: String -> String -> D3 -> Fay D3
+attrS = ffi "%3['attr'](%1,%2)"
+
+attr' :: String -> d -> D3D a -> Fay (D3D a)
+attr' = ffi "%3['attr'](%1,%2)"
+
+attrS' :: String -> String -> D3D a -> Fay (D3D a)
+attrS' = ffi "%3['attr'](%1,%2)"
 
 attrWith :: String -> (d -> String) -> D3D a -> Fay (D3D a)
 attrWith = ffi "%3['attr'](%1,%2)"

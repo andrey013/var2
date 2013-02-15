@@ -28,34 +28,49 @@ ajaxCommand :: Automatic command
             -> Fay ()
 ajaxCommand = ffi "jQuery['ajax']({ url: window['yesodFayCommandPath'], type: 'POST', data: { json: JSON.stringify(%1) }, dataType: 'json', success : %2})"
 
-
+data Event = Event{
+    getY :: Int
+}
 
 main :: Fay ()
 main = do
-    call (GetAlloys) $ \(AlloyList d) -> do
-        --print $ d
+    call (GetAlloys) $ \ (List d) -> do
+        print $ d
         table <- (select "#alloys" >>= append "table")
         thead <- append "thead" table
         tbody <- append "tbody" table
         let columns = ["Название", "Ликвидус", "Солидус"]
-        return thead >>=
-               append "tr" >>=
-               selectAll "th" >>=
-               d3data columns >>=
-               enter >>=
-               append' "th" >>=
-               textWith id
-        rows <- return tbody >>=
-                selectAll "tr" >>=
-                d3data d >>=
-                enter >>=
-                append' "tr"
-        cells <- return rows >>=
-                 selectAll' "td" >>=
-                 d3dataWith (\row -> [alloyName row, show $ alloyLiquidus row, show $ alloySolidus row]) >>=
-                 enter >>=
-                 append' "td" >>=
-                 textWith (\a -> a)
+        append "tr" thead >>=
+            selectAll "th" >>=
+            d3data columns >>=
+            enter >>=
+            append' "th" >>=
+            textWith id
+        rows <- selectAll "tr" tbody >>=
+            d3data d >>=
+            enter >>=
+            append' "tr"
+        cells <- selectAll' "td" rows >>=
+            d3dataWith (\row -> [alloyName row, show $ alloyLiquidus row, show $ alloySolidus row]) >>=
+            enter >>=
+            append' "td"-- >>=
+            --textWith (\a -> a)
+        svg <- append' "svg" cells >>=
+            attr' "width" 30 >>=
+            attr' "height" 100 >>=
+            append' "g"
+        drag <- d3behaviorDrag >>=
+            origin id >>=
+            --on "dragstart" (d3this) >>= --(this.parentNode.appendChild(this))
+            on' "drag" (\d ->
+                d3this >>= select' >>= attrS "transform" ("translate(5," ++ show (getY d) ++ ")")) --(dragmove)
+        node <- append' "g" svg >>=
+            attrS' "class" "node" >>=
+            attrS' "transform" "translate(5,50)" >>=
+            d3call drag
+        slider <- append' "rect" node >>=
+            attr' "width" 20 >>=
+            attr' "height" 8
         return ()
 
 {-
