@@ -31,7 +31,13 @@ ajaxCommand = ffi "jQuery['ajax']({ url: window['yesodFayCommandPath'], type: 'P
 data Event = Event{
     getY :: Int
 }
+{-
+dragstart :: Fay D3
+dragstart = ffi "this.parentNode.appendChild(this)"
 
+echothis :: Fay D3
+echothis = ffi "(function () { this.console.log(this); }).call()"
+-}
 main :: Fay ()
 main = do
     call (GetAlloys) $ \ (List d) -> do
@@ -61,9 +67,9 @@ main = do
             append' "g"
         drag <- d3behaviorDrag >>=
             origin id >>=
-            --on "dragstart" (d3this) >>= --(this.parentNode.appendChild(this))
-            on' "drag" (\d ->
-                d3this >>= select' >>= attrS "transform" ("translate(5," ++ show (getY d) ++ ")")) --(dragmove)
+            on "dragstart" (\this -> do parentNode this >>= appendChild this) >>= --(this.parentNode.appendChild(this))
+            on' "drag" (\this d -> print d >>
+                select' this >>= attrS "transform" ("translate(5," ++ show (getY d) ++ ")")) --(dragmove)
         node <- append' "g" svg >>=
             attrS' "class" "node" >>=
             attrS' "transform" "translate(5,50)" >>=

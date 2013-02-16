@@ -3,6 +3,7 @@
 module Language.Fay.D3 (
     append,
     append',
+    appendChild,
     attr,
     attrS,
     attr',
@@ -26,6 +27,7 @@ module Language.Fay.D3 (
     on,
     on',
     origin,
+    parentNode,
     property,
     propertyWith,
     propertyWithIndex,
@@ -62,14 +64,20 @@ d3behaviorDrag = ffi "d3.behavior.drag()"
 d3this :: Fay D3
 d3this = ffi "this"
 
-origin :: (d -> String) -> D3 -> Fay D3
+origin :: (d -> d) -> D3 -> Fay D3
 origin = ffi "%2['origin'](%1)"
 
-on :: String -> Fay D3 -> D3 -> Fay D3
-on = ffi "%3['on'](%1,%2)"
+on :: String -> (Automatic a -> Fay D3) -> D3 -> Fay D3
+on = ffi "%3['on'](%1, (function() { %2(this); }))"
 
-on' :: String -> (a -> Fay D3) -> D3 -> Fay D3
-on' = ffi "%3['on'](%1,%2)"
+on' :: String -> (Automatic a -> Automatic b -> Fay D3) -> D3 -> Fay D3
+on' = ffi "%3['on'](%1,(function(d) { %2(this,d); }))"
+
+parentNode :: D3 -> Fay D3
+parentNode = ffi "%1['parentNode']"
+
+appendChild :: D3 -> D3 -> Fay D3
+appendChild = ffi "%2['appendChild'](%1)"
 
 ----
 ---- Select
