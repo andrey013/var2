@@ -1,11 +1,18 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 module Post where
 
-import Prelude
+import Prelude hiding (min, max)
 import FFI
 import Language.Fay.Yesod
 import Language.Fay.D3
 import SharedTypes
+
+
+min :: Automatic a -> Automatic a -> a
+min = ffi "Math.min(%1,%2)"
+
+max :: Automatic a -> Automatic a -> a
+max = ffi "Math.max(%1,%2)"
 
 alert' :: (Returns a -> command) -> Fay ()
 alert' f = alert'' (f Returns)
@@ -28,9 +35,6 @@ ajaxCommand :: Automatic command
             -> Fay ()
 ajaxCommand = ffi "jQuery['ajax']({ url: window['yesodFayCommandPath'], type: 'POST', data: { json: JSON.stringify(%1) }, dataType: 'json', success : %2})"
 
-data Event = Event{
-    getY :: Int
-}
 {-
 dragstart :: Fay D3
 dragstart = ffi "this.parentNode.appendChild(this)"
@@ -38,6 +42,10 @@ dragstart = ffi "this.parentNode.appendChild(this)"
 echothis :: Fay D3
 echothis = ffi "(function () { this.console.log(this); }).call()"
 -}
+
+data CellContent = TextCell String
+                 | DoubleCell Double
+
 main :: Fay ()
 main = do
     call (GetAlloys) $ \ (List d) -> do
@@ -57,27 +65,43 @@ main = do
             enter >>=
             append' "tr"
         cells <- selectAll' "td" rows >>=
-            d3dataWith (\row -> [alloyName row, show $ alloyLiquidus row, show $ alloySolidus row]) >>=
+            d3dataWith (\row -> [TextCell $ alloyName row, DoubleCell $ alloyLiquidus row, DoubleCell $ alloySolidus row]) >>=
             enter >>=
             append' "td"-- >>=
             --textWith (\a -> a)
-        svg <- append' "svg" cells >>=
-            attr' "width" 30 >>=
+        textFields <-
+            (filterWith (\d -> case d of TextCell _ -> True; _ -> False) cells) >>=
+            textWith (\(TextCell s) -> s)
+        doubleFields <-
+            (filterWith (\d -> case d of DoubleCell _ -> True; _ -> False) cells)
+        svg <- append' "svg" doubleFields >>=
+            attr' "width" 80 >>=
             attr' "height" 100 >>=
             append' "g"
-        drag <- d3behaviorDrag >>=
-            origin id >>=
-            on "dragstart" (\this -> do parentNode this >>= appendChild this) >>= --(this.parentNode.appendChild(this))
-            on' "drag" (\this d -> print d >>
-                select' this >>= attrS "transform" ("translate(5," ++ show (getY d) ++ ")")) --(dragmove)
+        dragg' <- drag
         node <- append' "g" svg >>=
             attrS' "class" "node" >>=
             attrS' "transform" "translate(5,50)" >>=
-            d3call drag
+            d3call dragg'
         slider <- append' "rect" node >>=
             attr' "width" 20 >>=
-            attr' "height" 8
+            attr' "height" 8 >>=
+            attr' "rx" 2 >>=
+            attr' "ry" 2
         return ()
+  where
+    drag :: Fay (D3D CellContent)
+    drag = d3behaviorDrag >>=
+        origin >>=
+        --on "dragstart" (\this -> do parentNode this >>= appendChild this) >>= --(this.parentNode.appendChild(this))
+        on' "drag" (\this (DoubleCell d) -> do
+            --print d; print this
+            y <- parentNode this >>= d3mouse
+            e <- d3event
+            print e
+            let minY = max 0 $ min 100 (y !! 1)
+            --print minY
+            select' this >>= attrS "transform" ("translate(5," ++ show (min 92 minY) ++ ")")) --(dragmove)
 
 {-
 function tabulate(data, columns) {

@@ -15,12 +15,15 @@ module Language.Fay.D3 (
     d3behaviorDrag,
     d3data,
     d3dataWith,
+    d3event,
+    d3mouse,
     d3this,
     enter,
     exit,
     filter,
     filterWith,
     filterWithIndex,
+    getDY,
     html,
     htmlWith,
     htmlWithIndex,
@@ -43,7 +46,8 @@ module Language.Fay.D3 (
     text,
     textWith,
     textWithIndex,
-    D3
+    D3,
+    D3D
     ) where
 
 import           FFI
@@ -55,22 +59,31 @@ data D3
 data D3D a
 
 
-d3call :: D3 -> D3D a -> Fay (D3D a)
+d3call :: D3D a -> D3D a -> Fay (D3D a)
 d3call = ffi "%2['call'](%1)"
 
-d3behaviorDrag :: Fay D3
+d3behaviorDrag :: Fay (D3D a)
 d3behaviorDrag = ffi "d3.behavior.drag()"
 
 d3this :: Fay D3
 d3this = ffi "this"
 
-origin :: (d -> d) -> D3 -> Fay D3
-origin = ffi "%2['origin'](%1)"
+d3event :: Fay a
+d3event = ffi "d3['event']"
 
-on :: String -> (Automatic a -> Fay D3) -> D3 -> Fay D3
+d3mouse :: D3 -> Fay [Double]
+d3mouse = ffi "d3['mouse'](%1)"
+
+getDY :: D3 -> Fay Int
+getDY = ffi "%1['sourceEvent']['y']"
+
+origin :: (D3D a) -> Fay (D3D a)
+origin = ffi "%1['origin'](function(d) { return d; })"
+
+on :: String -> (t -> Fay D3) -> (D3D a) -> Fay (D3D a)
 on = ffi "%3['on'](%1, (function() { %2(this); }))"
 
-on' :: String -> (Automatic a -> Automatic b -> Fay D3) -> D3 -> Fay D3
+on' :: String -> (t -> a -> Fay D3) -> (D3D a) -> Fay (D3D a)
 on' = ffi "%3['on'](%1,(function(d) { %2(this,d); }))"
 
 parentNode :: D3 -> Fay D3
