@@ -81,13 +81,18 @@ main = do
         dragg' <- drag
         node <- append' "g" svg >>=
             attrS' "class" "node" >>=
-            attrS' "transform" "translate(5,50)" >>=
+            attrWith "transform" (\(DoubleCell d) -> "translate(5," ++ show (100 - ((d-1500) / 2)) ++ ")") >>=
             d3call dragg'
         slider <- append' "rect" node >>=
             attr' "width" 20 >>=
             attr' "height" 8 >>=
             attr' "rx" 2 >>=
             attr' "ry" 2
+        textNode <- append' "text" node >>=
+            attr' "x" 21 >>=
+            attr' "y" 4 >>=
+            attrS' "dy" ".35em" >>=
+            textWith (\(DoubleCell d) -> show d)
         return ()
   where
     drag :: Fay (D3D CellContent)
@@ -100,8 +105,11 @@ main = do
             e <- d3event
             print e
             let minY = max 0 $ min 100 (y !! 1)
+            let value = (100-minY)*2+1500
             --print minY
-            select' this >>= attrS "transform" ("translate(5," ++ show (min 92 minY) ++ ")")) --(dragmove)
+            select' this >>= attrS "transform" ("translate(5," ++ show (min 92 minY) ++ ")") >>=
+                selectAll "text" >>= text (show value)
+        )
 
 {-
 function tabulate(data, columns) {

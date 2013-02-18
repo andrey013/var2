@@ -20,11 +20,10 @@ getAlloysR = defaultLayout $ do
 onCommand :: CommandHandler App App
 onCommand render (RollDie a r) = render r a
 onCommand render (GetAlloys r) = do
-    alloys <- runDB $ selectList [AlloyLiquidus >=. 0] []
+    alloys <- runDB $ selectList [AlloyName >=. "0"] []
     render r $ List $ map (convert . entityVal) alloys
   where
     convert Import.Alloy{..} = SharedTypes.Alloy{
                                    alloyName = unpack alloyName
-                                  ,alloyLiquidus = alloyLiquidus
-                                  ,alloySolidus = alloySolidus
+                                  ,alloyParameters = []
                                }

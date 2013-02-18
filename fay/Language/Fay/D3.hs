@@ -8,6 +8,7 @@ module Language.Fay.D3 (
     attrS,
     attr',
     attrS',
+    attrWith,
     classed,
     classedWith,
     classedWithIndex,

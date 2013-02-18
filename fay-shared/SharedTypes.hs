@@ -9,9 +9,21 @@ import Language.Fay.Yesod
 --import Fay.FFI ()
 
 data Alloy = Alloy {
-    alloyName     :: String
-   ,alloyLiquidus :: Double
-   ,alloySolidus  :: Double
+    alloyName       :: String
+   ,alloyParameters :: [AlloyParameter]
+} deriving (Show, Read, Typeable, Data)
+
+data AlloyParameter = AlloyParameter {
+    alloyParameterName :: String
+   ,alloyParameterMin :: Double
+   ,alloyParameterMax :: Double
+   ,argumentName :: String
+   ,points :: [Point]
+} deriving (Show, Read, Typeable, Data)
+
+data Point = Point {
+    pointX :: Maybe Double
+   ,pointY :: Double
 } deriving (Show, Read, Typeable, Data)
 
 data List a = List{

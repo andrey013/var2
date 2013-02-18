@@ -7,9 +7,18 @@ Email
     user UserId Maybe
     verkey Text Maybe
     UniqueEmail email
-Alloy json
+Alloy
     name Text
-    liquidus Double default=1620
-    solidus Double default=1550
-
+Parameter
+    key Text
+    rusName Text
+    default Double
+    minBound Double
+    maxBound Double
+    argumentName Text Maybe
+AlloyParameter
+    alloy AlloyId
+    parameter ParameterId
+    argument Double
+    value Double
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)
