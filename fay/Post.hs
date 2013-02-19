@@ -51,21 +51,21 @@ main = do
     call (GetAlloys) $ \ (List d) -> do
         print $ d
         table <- (select "#alloys" >>= append "table")
-        thead <- append "thead" table
+        --thead <- append "thead" table
         tbody <- append "tbody" table
         let columns = ["Название", "Ликвидус", "Солидус"]
-        append "tr" thead >>=
+        {-append "tr" thead >>=
             selectAll "th" >>=
             d3data columns >>=
             enter >>=
             append' "th" >>=
-            textWith id
+            textWith id-}
         rows <- selectAll "tr" tbody >>=
             d3data d >>=
             enter >>=
             append' "tr"
         cells <- selectAll' "td" rows >>=
-            d3dataWith (\row -> [TextCell $ alloyName row, DoubleCell $ alloyLiquidus row, DoubleCell $ alloySolidus row]) >>=
+            d3dataWith (\row -> [TextCell $ alloyName row]) >>=
             enter >>=
             append' "td"-- >>=
             --textWith (\a -> a)

@@ -10,16 +10,23 @@ import Language.Fay.Yesod
 
 data Alloy = Alloy {
     alloyName       :: String
-   ,alloyParameters :: [AlloyParameter]
+   ,alloyParams :: [AlloyParameter]
 } deriving (Show, Read, Typeable, Data)
 
-data AlloyParameter = AlloyParameter {
-    alloyParameterName :: String
-   ,alloyParameterMin :: Double
-   ,alloyParameterMax :: Double
-   ,argumentName :: String
-   ,points :: [Point]
-} deriving (Show, Read, Typeable, Data)
+data AlloyParameter =   AlloyParameter1D {
+                            oneDName  :: String
+                           ,oneDMin   :: Double
+                           ,oneDMax   :: Double
+                           ,oneDValue :: Double
+                        }
+                    |   AlloyParameter2D {
+                            twoDName    :: String
+                           ,twoDArgName :: String
+                           ,twoDMin     :: Double
+                           ,twoDMax     :: Double
+                           ,twoDValues  :: [Point]
+                        }
+  deriving (Show, Read, Typeable, Data)
 
 data Point = Point {
     pointX :: Maybe Double
